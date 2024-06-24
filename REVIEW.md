@@ -802,3 +802,326 @@ db.users.createIndex({ username: 1 });
     ```
   - 这表示学生1选修了“Math”课程，学生2选修了“Science”课程。
 
+### 4.5 关系代数的概念
+
+关系代数是关系数据库中的一种查询语言，用于对关系进行操作和处理。它提供了一组操作符，可以在关系上进行各种操作，从而生成新的关系。
+
+#### 关系代数的基本概念
+
+1. **关系代数的定义：**
+   - 从逻辑角度看，关系代数与关系演算相对应，用于描述数据库查询。
+   - 关系代数通过一组算子对关系进行操作，产生新的关系。
+
+2. **常用算子：**
+   - **$\sigma$ （Selection）：** 选出满足特定条件的元组。
+   - **$\pi$（Projection）：** 选出特定的列。
+   - **$\bowtie$（Join）：** 根据某些条件合并两个关系。
+   - **$\cap$（Union）：** 合并两个关系中的所有元组，去重。
+   - **$\cup$（Difference）：** 从一个关系中删除出现在另一个关系中的元组。
+   - **$\times $（Cartesian Product）：** 生成两个关系的所有可能组合。
+
+#### 关系代数的特点
+
+- **操作性：** 关系代数是一种操作性语言，明确规定了如何一步步执行查询操作。
+- **封闭性：** 所有操作的结果仍然是关系，这使得复杂的查询可以通过多个简单操作的组合来实现。
+
+### 4.6 选择和投影操作
+
+#### 选择操作（Selection）
+
+选择操作用于从关系中选出满足特定条件的元组。
+
+- **符号表示：** $ \sigma_{条件}(关系) $
+- **示例：**
+  - 查找学生姓名为Jason的元组：
+    $
+    \sigma_{s\_name='Jason'}(Student)
+    $
+  - 查找性别为男性且生日在2001年1月1日及之后的学生：
+    $
+    \sigma_{gender='male' \wedge birthday \ge '2001-1-1'}(Student)
+    $
+
+#### 投影操作（Projection）
+
+投影操作用于从关系中选出特定的列，类似于纵向切分。
+
+- **符号表示：** $ \pi_{列集合}(关系) $
+- **示例：**
+  - 选出学生表中的学号和姓名两列，且结果去重：
+    $
+    \pi_{\{s\_no, s\_name\}}(Student)
+    $
+
+#### 总结
+
+- **选择操作**通过条件筛选元组，形成一个新的关系。
+- **投影操作**通过选择特定列进行纵向切分，结果自动去重。
+
+### 4.7 连接操作
+
+#### 连接操作（Join）
+
+连接操作用于将两个关系根据特定条件合并，结果包含满足条件的所有元组组合。连接操作是二元的，用符号 $ \bowtie $ 表示。
+
+- **基本形式：** 
+  $
+  S \bowtie_{A} R = \sigma_{A}(S \times R)
+  $
+  这里， $ S \times R $ 表示 $ S $ 和 $ R $ 的笛卡尔积， $ \sigma_{A} $ 表示选择操作，选择满足条件 $ A $ 的元组。
+
+#### 等值连接（Equi-Join）
+
+等值连接是连接操作的一种特殊形式，其中连接条件是相等比较。
+
+- **示例：**
+  - 将 `Student` 表和 `SC` 表进行等值连接，条件是 `Student.s_no = SC.s_no`：
+    $
+    Student \bowtie_{Student.s\_no = SC.s\_no} SC
+    $
+  - 这将生成一个新的关系，其中包含 `Student` 和 `SC` 表中所有满足条件 `Student.s_no = SC.s_no` 的组合元组。
+
+#### 总结
+
+连接操作通过条件将两个关系合并，等值连接是常见的一种形式，用于将两张表的内容一起展示。连接操作使得关系数据库能够进行复杂的查询和数据整合。
+
+### 4.8 关系代数表达式
+
+关系代数表达式通过组合基本操作（选择、投影、连接）来表示查询需求。
+
+#### 示例：查找所有选择了“Math1”的学生学号
+
+1. **选择操作：**
+   - 从课程表 `Course` 中选择课程名为 “Math1” 的课程。
+   $
+   \sigma_{cname='Math1'}(Course)
+   $
+
+2. **连接操作：**
+   - 将选择出的课程与选课表 `SC` 进行连接，条件是 `Course.c_no = SC.c_no`。
+   $
+   \sigma_{cname='Math1'}(Course) \bowtie_{Course.c\_no = SC.c\_no} SC
+   $
+
+3. **投影操作：**
+   - 最后投影出学生学号 `s_no`。
+   $
+   \pi_{s\_no}(\sigma_{cname='Math1'}(Course) \bowtie_{Course.c\_no = SC.c\_no} SC)
+   $
+
+将上述步骤组合起来，我们得到完整的关系代数表达式：
+$
+\pi_{s\_no}(\sigma_{cname='Math1'}(Course) \bowtie_{Course.c\_no = SC.c\_no} SC)
+$
+
+通过组合选择、投影和连接操作，我们可以用关系代数表达复杂的查询需求。
+
+### 5.1 SQL语言的诞生
+
+在前面的内容中，我们介绍了关系数据库的诞生，包括其模型和操作方法。接下来，我们将简要介绍SQL语言的诞生背景和目的。
+
+#### SQL语言的起源
+
+- **关系数据库的需求：**
+  - 关系数据库采用了关系模型，使用关系代数和关系演算来操作数据。这些操作对计算机科学家和专业人员来说是合理的，但对于普通用户来说，理解和使用这些操作符可能并不直观。
+
+- **简化查询的需要：**
+  - 为了让更多人能够方便地操作关系数据库，需要一种更加接近自然语言的查询方式，使用户能够以简洁明了的方式表达复杂的关系查询。
+
+#### SQL的诞生
+
+- **语言设计：**
+  - SQL（Structured Query Language，结构化查询语言）应运而生。SQL是一种专门用于管理和操作关系数据库的语言，旨在通过接近自然语言的方式，实现对数据的查询、更新、插入和删除等操作。
+
+- **历史背景：**
+  - 1970年代，IBM的研究人员Donald D. Chamberlin和Raymond F. Boyce在Codd的关系模型基础上，设计了SEQUEL（Structured English Query Language），这就是SQL的前身。
+  - SEQUEL的设计目标是让用户能够以声明式语句（而不是过程式代码）来操作数据库，从而简化数据库操作。
+
+- **发展和标准化：**
+  - SEQUEL后更名为SQL，经过不断发展和完善，成为关系数据库管理系统（RDBMS）中广泛使用的标准查询语言。
+  - 1986年，美国国家标准学会（ANSI）和国际标准化组织（ISO）发布了SQL的第一个标准，SQL-86，随后多次更新标准，使SQL语言不断进化。
+
+SQL 语言的诞生源于对关系数据库操作的简化需求。通过 SQL ，用户可以用接近自然语言的方式，方便地进行复杂的关系代数操作，极大地提升了关系数据库的可用性和普及度。
+
+### 5.2 SQL语言概览
+
+SQL（Structured Query Language）是关系数据库中的标准语言，用于执行CRUD（创建、读取、更新、删除）操作。SQL分为三种子语言：
+
+1. **DDL（数据定义语言）：**
+   - 定义和管理数据库结构。
+   - 常用命令：`CREATE TABLE`、`ALTER TABLE`、`DROP TABLE`。
+
+2. **DQL（数据查询语言）：**
+   - 查询数据库中的数据。
+   - 常用命令：`SELECT`。
+
+3. **DML（数据操作语言）：**
+   - 操作数据库中的数据。
+   - 常用命令：`INSERT INTO`、`UPDATE`、`DELETE`。
+
+#### 关系数据库与文档数据库的区别
+
+- **结构定义：**
+  - 关系数据库需先定义数据结构，所有数据必须符合该定义。
+  - 文档数据库结构灵活，无需预定义模式，允许不同结构的数据。
+
+- **数据模型：**
+  - 关系数据库使用表（行和列）存储数据。
+  - 文档数据库使用类似JSON的文档格式存储数据。
+
+### 5.3 SQL中的DDL
+
+#### 创建表格
+
+在SQL中，使用DDL（数据定义语言）可以创建和管理数据库的表结构。下面是创建三张表格（学生表Student、课程表Course、选课表SC）的示例，以及常用的约束条件。
+
+#### 示例：创建学生表、课程表和选课表
+
+1. **创建学生表（Student）：**
+
+```sql
+CREATE TABLE Student (
+    s_no CHAR(9) PRIMARY KEY,          -- 学号，主键
+    s_name VARCHAR(50) NOT NULL,   -- 姓名，不允许为空
+    gender CHAR(1),
+    birthday DATE
+);
+```
+
+2. **创建课程表（Course）：**
+
+```sql
+CREATE TABLE Course (
+    c_no CHAR(4) PRIMARY KEY,        -- 课程号，主键
+    cname CHAR(40),   -- 课程名
+    credit SMALLINT NOT NULL         -- 学分，不允许为空
+);
+```
+
+3. **创建选课表（SC）：**
+
+```sql
+CREATE TABLE SC (
+    s_no CHAR(9),                      -- 学号，外键
+    c_no CHAR(4),                      -- 课程号，外键
+    date DATE,
+    grade SMALLINT,
+    FOREIGN KEY (s_no) REFERENCES Student(s_no), -- 外键，引用学生表的学号
+    FOREIGN KEY (c_no) REFERENCES Course(c_no)   -- 外键，引用课程表的课程号
+);
+```
+
+#### 约束条件
+
+- **PRIMARY KEY**：定义主键，唯一标识表中的每一行。
+- **FOREIGN KEY**：定义外键，建立与其他表的关系。
+- **NOT NULL**：确保字段不能为空。
+- **UNIQUE**：确保字段的值在整个表中唯一。
+- **CHECK**：定义字段的约束条件，确保数据满足特定条件。
+
+### 5.4 SQL数据插入
+
+在SQL中，使用 `INSERT INTO` 语句可以向表中插入数据。
+
+#### 基本语法
+
+```sql
+INSERT INTO table_name (column1, column2, column3, ...)
+VALUES (value1, value2, value3, ...);
+```
+
+#### 示例
+
+1. **插入单行数据：**
+
+将数据插入学生表 `Student` 中：
+
+```sql
+INSERT INTO Student
+VALUES ('S001', 'Jason', 'M', '2000-07-01');
+```
+
+2. **插入多行数据：**
+
+一次插入多行数据到 `Student` 表中：
+
+```sql
+INSERT INTO Student (s_no, s_name, gender, birthday)
+VALUES
+    (2, 'Alice', NULL, '2001-03-15'),
+    (3, 'Bob', 'M', '2002-07-08');
+```
+
+#### 注意事项
+
+- **字段顺序**：列名的顺序必须与对应的值的顺序一致。
+- **默认值**：如果某些列在表定义中有默认值，可以省略这些列及其对应的值，数据库会自动使用默认值。
+
+### 5.5 SQL单表查询
+
+在SQL中，使用 `SELECT` 语句可以从单个表中查询数据，并且可以在查询中进行一定的运算和条件筛选。
+
+#### 基本语法
+
+```sql
+SELECT column1, column2, ...
+FROM table_name
+WHERE condition;
+```
+
+- **column1, column2, ...**：要查询的列名，可以是单个列或者多个列。
+- **table_name**：要查询的表名。
+- **condition**：可选，用于过滤查询结果的条件。
+
+#### 示例
+
+1. **基本查询**
+
+查询 `Student` 表中所有学生的学号和姓名：
+
+```sql
+SELECT s_no, s_name
+FROM Student;
+```
+
+2. **条件查询**
+
+查询 `Student` 表中姓为 "Smith" 的学生信息：
+
+```sql
+SELECT *
+FROM Student
+WHERE s_name = 'Smith';
+```
+
+3. **运算查询**
+
+查询 `Student` 表中年龄大于等于18岁的学生：
+
+```sql
+SELECT *
+FROM Student
+WHERE YEAR(CURRENT_DATE) - YEAR(birthday) >= 18;
+```
+
+4. **DISTINCT 查询**
+
+查询 `Student` 表中不及格的学生姓名：
+
+```sql
+SELECT DISTINCT s_name
+FROM Student
+WHERE grade <= 60;
+```
+
+5. **计算字段**
+
+在 `SELECT` 中进行计算：
+
+查询 `Student` 表中每位学生的年龄：
+
+```sql
+SELECT s_name, YEAR(CURRENT_DATE) - YEAR(birthday) AS age
+FROM Student;
+```
+
