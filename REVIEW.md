@@ -513,13 +513,13 @@ db.users.createIndex({ username: 1 });
 ```
 
 - **字段说明：**
-  - `_id`：唯一标识符，MongoDB自动生成的ObjectId。
+  - `_id`：唯一标识符，MongoDB 自动生成的 ObjectId。
   - `title`：文章标题。
   - `content`：文章内容。
   - `tags`：标签列表，用于分类和检索。
-  - `author`：发布该文章的用户ID。
+  - `author`：发布该文章的用户 ID。
   - `created_at`：文章发布时间。
-  - `comments`：评论列表，每条评论包括评论者ID、评论内容、评论时间和可能的回复列表。
+  - `comments`：评论列表，每条评论包括评论者 ID、评论内容、评论时间和可能的回复列表。
 
 #### 2. 关系和功能设计
 
